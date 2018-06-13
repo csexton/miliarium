@@ -1,0 +1,6 @@
+inherit_mode:
+  merge:
+    - Exclude
+
+inherit_from:
+  - https://raw.githubusercontent.com/RadiusNetworks/radius-spec/master/common_rubocop_rails.yml
