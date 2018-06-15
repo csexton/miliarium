@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "sinatra"
+gem "sinatra", require: "sinatra/base"
 gem "sinatra-contrib", require: false
 
 # Assets
@@ -13,6 +13,8 @@ gem "rack"
 gem "faraday"
 gem "octokit"
 gem "redis"
+gem "puma"
+gem "http"
 
 group :development do
   gem "foreman"
