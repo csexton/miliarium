@@ -9,15 +9,16 @@ gem "sinatra-contrib", require: false
 gem "slim"
 gem "sass"
 
-gem "rack"
-gem "faraday"
-gem "octokit"
-gem "redis"
-gem "puma"
 gem "http"
+gem "octokit"
+gem "puma"
+gem "rack"
+gem "redis"
+gem "warden"
+gem "warden-github"
 
 group :development do
-  gem "foreman"
   gem "byebug"
-  gem "dotenv"
+  gem "dotenv", require: "dotenv/load"
+  gem "foreman"
 end

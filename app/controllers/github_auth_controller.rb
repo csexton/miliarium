@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "http"
+require "byebug"
+
 require_relative "application_controller"
 
 class GithubAuthController < ApplicationController
@@ -11,34 +14,33 @@ class GithubAuthController < ApplicationController
     redirect '/'
   end
 
-  # access this to request a token from facebook.
-  get "/" do
+  get "/unauthenticated" do
     url = "https://github.com/login/oauth/authorize?client_id=#{CLIENT_ID}&redirect_uri=https://#{request.host}/auth/github/callback"
     redirect url
+  end
+
+  get "/" do
+    redirect "auth/unauthenticated"
   end
 
   # If the user authorizes it, this request gets your access token
   # and makes a successful api call.
   get "/callback" do
+    debugger
     code = params["code"]
-    uri = URI.parse("https://github.com/login/oauth/access_token")
-    form = {
+    url = "https://github.com/login/oauth/access_token"
+    payload = {
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
       code: code
     }
-    res = Net::HTTP.post_form(uri, form)
-    params = URI.decode_www_form(res.body).to_h
+
+    http = HTTP.timeout(connect: 15, read: 30)
+    response = http.post(url, json: payload)
+    params = URI.decode_www_form(response.to_s).to_h
 
     session[:access_token] = params["access_token"]
 
     redirect "/"
-  end
-
-  def redirect_uri(path = '/auth/github/callback', query = nil)
-    uri = URI.parse(request.url)
-    uri.path  = path
-    uri.query = query
-    uri.to_s
   end
 end
