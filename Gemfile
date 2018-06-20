@@ -14,8 +14,7 @@ gem "octokit"
 gem "puma"
 gem "rack"
 gem "redis"
-gem "warden"
-gem "warden-github"
+gem "omniauth-github"
 
 group :development do
   gem "byebug"

@@ -12,16 +12,10 @@ require "byebug"
 
 Dir.glob('./app/{helpers,controllers}/*.rb').each { |file| require file }
 
-class BadAuthentication < Sinatra::Base
-  get '/unauthenticated' do
-    status 403
-    <<-EOS
-      <h2>Unable to authenticate, sorry bud.</h2>
-      <p>#{env['warden'].message}</p>
-    EOS
-  end
+use Rack::Session::Cookie, secret: ENV['SECRET_KEY_BASE']
+use OmniAuth::Builder do
+  provider :github, ENV['GITHUB_CLIENT_ID'], ENV['GITHUB_CLIENT_SECRET']
 end
 
-
-#map('/auth/github') { run GithubAuthController }
+map('/auth/github') { run GithubAuthController }
 map('/') { run ApplicationController }
