@@ -18,8 +18,6 @@ class ApplicationController < Sinatra::Base
     enable :logging
   end
 
-
-
   get '/profile' do
     verify_browser_session
     env['warden'].authenticate!

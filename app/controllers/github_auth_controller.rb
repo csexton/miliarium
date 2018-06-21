@@ -3,8 +3,6 @@
 require "http"
 require "byebug"
 
-require_relative "application_controller"
-
 class GithubAuthController < ApplicationController
   CLIENT_ID = ENV["CLIENT_ID"]
   CLIENT_SECRET = ENV["CLIENT_SECRET"]
@@ -13,6 +11,9 @@ class GithubAuthController < ApplicationController
   # and makes a successful api call.
   get "/callback" do
     auth_hash = request.env['omniauth.auth']
+
+    github_token = auth_hash["credentials"]["token"]
+    client = Octokit::Client.new(access_token: github_token, per_page: 100)
     debugger
     #code = params["code"]
     #url = "https://github.com/login/oauth/access_token"
@@ -30,7 +31,7 @@ class GithubAuthController < ApplicationController
     session[:access_token] = auth_hash["credentials"]["token"]
 
     #redirect "/"
-    erb "<h1>#{params[:provider]}</h1>
+    erb "<a href='/auth/github'>reload</a><br><h1>#{params[:provider]}</h1>
          <pre>#{JSON.pretty_generate(request.env['omniauth.auth'])}</pre>"
   end
 end
