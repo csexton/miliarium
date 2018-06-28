@@ -8,8 +8,6 @@ class ApplicationController < Sinatra::Base
     after_reload { puts 'reloaded' }
   end
 
-  enable :sessions
-
   # set folder for templates to ../views, but make the path absolute
   set :views, File.expand_path('../views', __dir__)
 
@@ -18,29 +16,9 @@ class ApplicationController < Sinatra::Base
     enable :logging
   end
 
-  get '/profile' do
-    verify_browser_session
-    env['warden'].authenticate!
-    slim :index, locals: { client: client }
-  end
-
-  get '/login' do
-    verify_browser_session
-    env['warden'].authenticate!
+  get "/sign_out" do
+    session.clear
     redirect '/'
-  end
-
-  get '/logout' do
-    env['warden'].logout
-    redirect '/'
-  end
-
-
-  get "/" do
-    "ohai"
-    #  debugger
-    #  env['warden'].authenticate!
-    #  client = Octokit::Client.new(access_token: session[:access_token])
   end
 
   get "/debugger" do

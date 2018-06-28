@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require "http"
-require "byebug"
+require_relative "application_controller"
 
 class GithubAuthController < ApplicationController
   CLIENT_ID = ENV["CLIENT_ID"]
@@ -14,7 +13,6 @@ class GithubAuthController < ApplicationController
 
     github_token = auth_hash["credentials"]["token"]
     client = Octokit::Client.new(access_token: github_token, per_page: 100)
-    debugger
     #code = params["code"]
     #url = "https://github.com/login/oauth/access_token"
     #payload = {
@@ -28,10 +26,27 @@ class GithubAuthController < ApplicationController
     #params = URI.decode_www_form(response.to_s).to_h
 
     #session[:access_token] = params["access_token"]
-    session[:access_token] = auth_hash["credentials"]["token"]
+
+
+    u = User.find_or_create github_uid: auth_hash.uid
+    u.name = auth_hash.info.name
+    u.avatar_url = auth_hash.info.image
+    u.github_access_token = auth_hash.credentials.token
+
+    u.save
+
+    session[:access_token] = auth_hash.credentials.token
+    session[:user_id] = u.pk
+
+    debugger
 
     #redirect "/"
     erb "<a href='/auth/github'>reload</a><br><h1>#{params[:provider]}</h1>
          <pre>#{JSON.pretty_generate(request.env['omniauth.auth'])}</pre>"
+  end
+
+  get "/sign_out" do
+    session.clear
+    redirect '/'
   end
 end

@@ -10,8 +10,16 @@ require "sinatra/base"
 require "sinatra/reloader"
 require "byebug"
 
+require_relative "db/config"
+
+def require_dir(dir)
+  Dir[File.join(__dir__, dir, '*.rb')].each { |file| require file }
+end
+
+require_relative "app/models/user"
 require_relative "app/helpers/application_helper"
 require_relative "app/controllers/application_controller"
+require_relative "app/controllers/profile_controller"
 require_relative "app/controllers/github_auth_controller"
 
 
@@ -21,4 +29,5 @@ use OmniAuth::Builder do
 end
 
 map('/auth/github') { run GithubAuthController }
+map('/profile ') { run ProfileController }
 map('/') { run ApplicationController }
